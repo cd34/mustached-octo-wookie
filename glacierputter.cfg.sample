@@ -1,0 +1,7 @@
+[glacier]
+
+aws_access_key_id = XXXXXX
+aws_secret_access_key = XXXXXX
+
+vault = vaultname
+region = us-west-2
