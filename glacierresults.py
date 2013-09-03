@@ -23,7 +23,11 @@ def main(jobid):
             print 'ERROR', json.loads(e.body)['message']
             
     else:
-        print layer1.list_jobs(vault, completed=False)
+        jobs = layer1.list_jobs(vault, completed=False)
+        for job_detail in jobs['JobList']:
+            print 'Request: {0}\nAction: {1}, Status: {2}\n'.format(
+                job_detail['JobId'], job_detail['StatusCode'],
+                job_detail['Action'])
 
 if __name__ == '__main__':
     config = ConfigParser.ConfigParser()
