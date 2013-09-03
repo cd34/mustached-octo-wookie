@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 
-"""
-M4ofpKwzspYNJrJqgHUdONtlqr9IDFPDl5TWp7pTFG8HCTQjd2w37PAIPy2IOcAq0tTmD3MdgA-lBuPFaQfgpiDncKEQ
-"""
-
 import ConfigParser
+import json
 import sys
 import os.path
 
 from boto.glacier.layer1 import Layer1
+from boto.glacier.exceptions import UnexpectedHTTPResponseError
 
 def main(jobid):
     layer1 = Layer1(aws_access_key_id=config.get('glacier',
@@ -19,7 +17,11 @@ def main(jobid):
     vault = config.get('glacier', 'vault')
  
     if jobid:
-        print layer1.get_job_output(vault, jobid)
+        try:
+            print layer1.get_job_output(vault, jobid)
+        except UnexpectedHTTPResponseError as e:
+            print 'ERROR', json.loads(e.body)['message']
+            
     else:
         print layer1.list_jobs(vault, completed=False)
 
