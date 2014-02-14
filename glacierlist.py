@@ -3,6 +3,7 @@
 import ConfigParser
 import sys
 import os
+import json
 
 from boto.glacier.layer1 import Layer1
 
@@ -17,6 +18,18 @@ def main():
         "Format":"JSON"})
  
     print 'Inventory job id: {0}'.format(job_id)
+
+    if config.get('glacier','jobs'):
+        try:
+            file = open(config.get('glacier','jobs'), 'r+')
+            list = json.loads(file.read())
+            list['jobs'].append(job_id)
+        except IOError:
+            file = open(config.get('glacier','jobs'), 'w+')
+            list = {'jobs':[job_id]}
+        file.seek(0) 
+        file.write(json.dumps(list))
+        file.close()
 
 if __name__ == '__main__':
     config = ConfigParser.ConfigParser()

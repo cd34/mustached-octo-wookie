@@ -5,3 +5,6 @@ aws_secret_access_key = XXXXXX
 
 vault = vaultname
 region = us-west-2
+
+contents = /path/to/glacier-contents.txt
+jobs = /path/to/glacier-jobs.txt
