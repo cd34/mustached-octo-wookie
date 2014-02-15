@@ -8,6 +8,12 @@ import os.path
 from boto.glacier.layer1 import Layer1
 from boto.glacier.exceptions import UnexpectedHTTPResponseError
 
+def printjobs(jobs):
+    for job_detail in jobs['JobList']:
+        print 'Request: {0}\nAction: {1}, Status: {2}\n'.format(
+            job_detail['JobId'], job_detail['StatusCode'],
+            job_detail['Action'])
+
 def main(jobid):
     layer1 = Layer1(aws_access_key_id=config.get('glacier',
          'aws_access_key_id'), aws_secret_access_key=config.get('glacier',
@@ -23,11 +29,13 @@ def main(jobid):
             print 'ERROR', json.loads(e.body)['message']
             
     else:
-        jobs = layer1.list_jobs(vault, completed=False)
-        for job_detail in jobs['JobList']:
-            print 'Request: {0}\nAction: {1}, Status: {2}\n'.format(
-                job_detail['JobId'], job_detail['StatusCode'],
-                job_detail['Action'])
+        running_jobs = layer1.list_jobs(vault, completed=False)
+        print 'Running Jobs'
+        printjobs(running_jobs)
+        completed_jobs = layer1.list_jobs(vault, completed=True)
+        print 'Completed Jobs'
+        printjobs(completed_jobs)
+        
 
 if __name__ == '__main__':
     config = ConfigParser.ConfigParser()

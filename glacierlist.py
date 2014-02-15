@@ -19,6 +19,10 @@ def main():
  
     print 'Inventory job id: {0}'.format(job_id)
 
+    """
+    Decided to use the AWS methods instead, but, leaving this code here
+    as I believe there could be a need for historical jobs.
+
     if config.get('glacier','jobs'):
         try:
             file = open(config.get('glacier','jobs'), 'r+')
@@ -30,6 +34,7 @@ def main():
         file.seek(0) 
         file.write(json.dumps(list))
         file.close()
+    """
 
 if __name__ == '__main__':
     config = ConfigParser.ConfigParser()
