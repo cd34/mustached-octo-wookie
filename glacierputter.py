@@ -19,7 +19,7 @@ def main():
     if len(sys.argv) > 1:
         for filename in sys.argv[1:]:
             if os.path.isfile(filename):
-                id = uploader.upload(filename, filename)
+                id = uploader.upload(filename, filename.split('/')[-1])
                 print 'Uploaded: {0}, id: {1}'.format(filename, id) 
             else:
                 print 'Couldn\'t find file: {0}'.format(filename) 
