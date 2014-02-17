@@ -30,7 +30,7 @@ def main(jobid):
             if contents_file:
                 try:
                     file = open(contents_file, 'r+')
-                    existing_contents = list(json.loads(file.read()))
+                    existing_contents = json.loads(file.read())
                     list_of_files = dict(list_of_files.items() + \
                         existing_contents.items())
                 except IOError:
