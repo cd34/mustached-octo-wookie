@@ -28,14 +28,7 @@ def main(jobid):
             list_of_files = {x['ArchiveId']:x for x in contents['ArchiveList']}
             contents_file = config.get('glacier','contents')
             if contents_file:
-                try:
-                    file = open(contents_file, 'r+')
-                    existing_contents = json.loads(file.read())
-                    list_of_files = dict(list_of_files.items() + \
-                        existing_contents.items())
-                except IOError:
-                    file = open(contents_file, 'w+')
-                file.seek(0)
+                file = open(contents_file, 'w+')
                 file.write(json.dumps(list_of_files))
                 file.close()
         except UnexpectedHTTPResponseError as e:
