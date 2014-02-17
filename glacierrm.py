@@ -5,25 +5,17 @@ import os
 import sys
 
 from boto.glacier.layer1 import Layer1
-from boto.glacier.concurrent import ConcurrentUploader
 
-def main():
+def main(archive_id):
     layer1 = Layer1(aws_access_key_id=config.get('glacier', 
          'aws_access_key_id'), aws_secret_access_key=config.get('glacier',
          'aws_secret_access_key'), region_name=config.get('glacier',
          'region'))
 
-    uploader = ConcurrentUploader(layer1, config.get('glacier', 'vault'),
-        part_size=128*1024*1024, num_threads=4)
-
     if len(sys.argv) > 1:
-        for filename in sys.argv[1:]:
-            if os.path.isfile(filename):
-                id = uploader.upload(filename, filename.split('/')[-1])
-                print 'Uploaded: {0}, id: {1}'.format(filename, id) 
-                # update local storage
-            else:
-                print 'Couldn\'t find file: {0}'.format(filename) 
+         vault = config.get('glacier', 'vault')
+         layer1.delete_archive(vault, archive_id) 
+         # update local storage
     else:
         print """\
 Need at least one filename on the command line, can accept globs.
@@ -39,6 +31,6 @@ if __name__ == '__main__':
         'glacierputter.cfg')))
 
     try:
-        main()
+        main(sys.argv[1])
     except KeyboardInterrupt:
         sys.exit()
