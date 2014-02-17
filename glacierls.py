@@ -6,7 +6,7 @@ import os
 import json
 
 def main():
-    file = open(config.get('glacier','contents'), 'r+')
+    file = open(config.get('glacier','contents'), 'r')
     existing_contents = json.loads(file.read())
     for item in existing_contents.items():
         print item[1]['ArchiveDescription'], item[1]['CreationDate'], \

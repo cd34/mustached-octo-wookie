@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import ConfigParser
+import json
 import os
 import sys
 
@@ -14,14 +15,29 @@ def main():
          'region'))
 
     uploader = ConcurrentUploader(layer1, config.get('glacier', 'vault'),
-        part_size=128*1024*1024, num_threads=4)
+        part_size=128*1024*1024, num_threads=2)
 
     if len(sys.argv) > 1:
         for filename in sys.argv[1:]:
             if os.path.isfile(filename):
-                id = uploader.upload(filename, filename.split('/')[-1])
+                archive_description = filename.split('/')[-1]
+                id = uploader.upload(filename, archive_description)
                 print 'Uploaded: {0}, id: {1}'.format(filename, id) 
-                # update local storage
+                contents_file = config.get('glacier','contents')
+                list_of_files = {id:{'ArchiveId':id, 
+                    'ArchiveDescription':archive_description}}
+                if contents_file:
+                    existing_contents = {}
+                    try:
+                        file = open(contents_file, 'r+')
+                        existing_contents = json.loads(file.read())
+                    except IOError:
+                        file = open(contents_file, 'w+')
+                    list_of_files = dict(list_of_files.items() + \
+                        existing_contents.items())
+                    file.seek(0)
+                    file.write(json.dumps(list_of_files))
+                    file.close()
             else:
                 print 'Couldn\'t find file: {0}'.format(filename) 
     else:

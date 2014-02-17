@@ -3,7 +3,6 @@
 import ConfigParser
 import sys
 import os
-import json
 
 from boto.glacier.layer1 import Layer1
 
