@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import ConfigParser
+import datetime
 import json
 import os
 import sys
@@ -14,8 +15,13 @@ def main():
          'aws_secret_access_key'), region_name=config.get('glacier',
          'region'))
 
+    threads = 1
+    try:
+        threads = config.get('glacier', 'threads')
+    except ConfigParser.NoOptionError:
+        pass
     uploader = ConcurrentUploader(layer1, config.get('glacier', 'vault'),
-        part_size=128*1024*1024, num_threads=2)
+        part_size=128*1024*1024, num_threads=threads)
 
     if len(sys.argv) > 1:
         for filename in sys.argv[1:]:
@@ -23,9 +29,18 @@ def main():
                 archive_description = filename.split('/')[-1]
                 id = uploader.upload(filename, archive_description)
                 print 'Uploaded: {0}, id: {1}'.format(filename, id) 
+                filesize = 0
+                try:
+                    filesize = os.stat(filename).st_size
+                except OSError:
+                    pass
+                
                 contents_file = config.get('glacier','contents')
                 list_of_files = {id:{'ArchiveId':id, 
-                    'ArchiveDescription':archive_description}}
+                    'ArchiveDescription':archive_description,
+                    'CreationDate':datetime.datetime.now(). \
+                        strftime('%Y-%m-%dT%H:%M:%SZ'),
+                    'Size':filesize}}
                 if contents_file:
                     existing_contents = {}
                     try:
