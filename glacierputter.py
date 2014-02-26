@@ -17,7 +17,7 @@ def main():
 
     threads = 1
     try:
-        threads = config.get('glacier', 'threads')
+        threads = config.getint('glacier', 'threads')
     except ConfigParser.NoOptionError:
         pass
     uploader = ConcurrentUploader(layer1, config.get('glacier', 'vault'),
