@@ -26,13 +26,15 @@ def main(jobid):
     if jobid:
         try:
             contents = vault.get_job(jobid)
-            if contents.get('ArchiveList'):
-                list_of_files = {x['ArchiveId']:x for x in contents['ArchiveList']}
-                contents_file = config.get('glacier','contents')
-                if contents_file:
-                    file = open(contents_file, 'w+')
-                    file.write(json.dumps(list_of_files))
-                    file.close()
+            if contents.action == u'InventoryRetrieval':
+                if contents.completed:
+                    list_of_files = {x['ArchiveId']:x for x in \
+                        contents.get_output()['ArchiveList']}
+                    contents_file = config.get('glacier','contents')
+                    if contents_file:
+                        file = open(contents_file, 'w+')
+                        file.write(json.dumps(list_of_files))
+                        file.close()
             else:
                 if contents.completed:
                     contents.download_to_file('/tmp/invention.m4v')
