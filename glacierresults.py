@@ -16,7 +16,7 @@ def printjobs(jobs, header):
                 job_detail.id, job_detail.status_code,
                 job_detail.description)
 
-def main(jobid):
+def main(jobid, filename):
     layer2 = Layer2(aws_access_key_id=config.get('glacier',
          'aws_access_key_id'), aws_secret_access_key=config.get('glacier',
          'aws_secret_access_key'), region_name=config.get('glacier',
@@ -37,7 +37,10 @@ def main(jobid):
                         file.close()
             else:
                 if contents.completed:
-                    contents.download_to_file('/tmp/invention.m4v')
+                    if filename:
+                        contents.download_to_file(filename)
+                    else:
+                        print 'ERROR', 'must have a filename'
         except UnexpectedHTTPResponseError as e:
             print 'ERROR', json.loads(e.body)['message']
             
@@ -56,8 +59,10 @@ if __name__ == '__main__':
     try:
         if(len(sys.argv) < 2):
             jobid = None
+            filename = None
         else:
             jobid = sys.argv[1]
-        main(jobid)
+            filename = sys.argv[2]
+        main(jobid, filename)
     except KeyboardInterrupt:
         sys.exit()
