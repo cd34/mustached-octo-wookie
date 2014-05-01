@@ -57,11 +57,11 @@ if __name__ == '__main__':
         'glacierputter.cfg')))
     
     try:
-        if(len(sys.argv) < 2):
-            jobid = None
-            filename = None
-        else:
+        jobid = None
+        filename = None
+        if(len(sys.argv) > 1):
             jobid = sys.argv[1]
+        if(len(sys.argv) > 2):
             filename = sys.argv[2]
         main(jobid, filename)
     except KeyboardInterrupt:
