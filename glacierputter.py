@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ConfigParser
+import configparser as ConfigParser
 import datetime
 import json
 import os
@@ -40,7 +40,7 @@ def main():
             if os.path.isfile(filename) and archive_description \
                 not in filenames:
                 id = uploader.upload(filename, archive_description)
-                print 'Uploaded: {0}, id: {1}'.format(filename, id) 
+                print('Uploaded: {0}, id: {1}'.format(filename, id))
                 filesize = 0
                 try:
                     filesize = os.stat(filename).st_size
@@ -62,18 +62,18 @@ def main():
                     file.close()
             else:
                 if not os.path.isfile(filename):
-                    print 'Couldn\'t find file: {0}'.format(filename) 
+                    print('Couldn\'t find file: {0}'.format(filename))
                 else:
-                    print 'File {filename} is already in glacier' \
-                        .format(filename=filename) 
+                    print('File {filename} is already in glacier' \
+                        .format(filename=filename))
     
     else:
-        print """\
+        print("""\
 Need at least one filename on the command line, can accept globs.
 
 Example:
 
-{0} *.py""".format(sys.argv[0])
+{0} *.py""".format(sys.argv[0]))
 
 
 if __name__ == '__main__':

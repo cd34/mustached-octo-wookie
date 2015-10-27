@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ConfigParser
+import configparser as ConfigParser
 import sys
 import os
 
@@ -15,7 +15,7 @@ def main(id):
  
     job_id = vault.retrieve_archive(id)
  
-    print 'Inventory job id: {0}'.format(job_id)
+    print('Inventory job id: {0}'.format(job_id))
 
 if __name__ == '__main__':
     config = ConfigParser.ConfigParser()

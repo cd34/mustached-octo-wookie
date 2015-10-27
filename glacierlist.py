@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ConfigParser
+import configparser as ConfigParser
 import sys
 import os
 
@@ -16,7 +16,7 @@ def main():
         {"Description":"inventory-job", "Type":"inventory-retrieval",
         "Format":"JSON"})
  
-    print 'Inventory job id: {0}'.format(job_id)
+    print('Inventory job id: {0}'.format(job_id))
 
     """
     Decided to use the AWS methods instead, but, leaving this code here

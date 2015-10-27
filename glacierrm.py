@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ConfigParser
+import configparser as ConfigParser
 import os
 import json
 import sys
@@ -26,12 +26,12 @@ def main(archive_id):
             file.write(json.dumps(existing_contents))
             file.close()
     else:
-        print """\
+        print("""\
 Need at least one filename on the command line, can accept globs.
 
 Example:
 
-{0} *.py""".format(sys.argv[0])
+{0} *.py""".format(sys.argv[0]))
 
 
 if __name__ == '__main__':

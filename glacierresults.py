@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ConfigParser
+import configparser as ConfigParser
 import json
 import sys
 import os.path
@@ -10,11 +10,11 @@ from boto.glacier.exceptions import UnexpectedHTTPResponseError
 
 def printjobs(jobs, header):
     if jobs:
-        print header
+        print(header)
         for job_detail in jobs:
-            print 'Request: {0}\nAction: {1}, Status: {2}\n'.format(
+            print('Request: {0}\nAction: {1}, Status: {2}\n'.format(
                 job_detail.id, job_detail.status_code,
-                job_detail.description)
+                job_detail.description))
 
 def main(jobid, filename):
     layer2 = Layer2(aws_access_key_id=config.get('glacier',
@@ -40,9 +40,9 @@ def main(jobid, filename):
                     if filename:
                         contents.download_to_file(filename)
                     else:
-                        print 'ERROR', 'must have a filename'
+                        print('ERROR', 'must have a filename')
         except UnexpectedHTTPResponseError as e:
-            print 'ERROR', json.loads(e.body)['message']
+            print('ERROR', json.loads(e.body)['message'])
             
     else:
         running_jobs = vault.list_jobs(completed=False)
