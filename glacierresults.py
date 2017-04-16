@@ -1,12 +1,12 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import configparser as ConfigParser
 import json
 import sys
 import os.path
 
-from boto.glacier.layer2 import Layer2
-from boto.glacier.exceptions import UnexpectedHTTPResponseError
+#from boto.glacier.layer2 import Layer2
+#from boto.glacier.exceptions import UnexpectedHTTPResponseError
 
 def printjobs(jobs, header):
     if jobs:
@@ -17,10 +17,11 @@ def printjobs(jobs, header):
                 job_detail.description))
 
 def main(jobid, filename):
-    layer2 = Layer2(aws_access_key_id=config.get('glacier',
-         'aws_access_key_id'), aws_secret_access_key=config.get('glacier',
-         'aws_secret_access_key'), region_name=config.get('glacier',
-         'region'))
+    #layer2 = Layer2(aws_access_key_id=config.get('glacier',
+    #     'aws_access_key_id'), aws_secret_access_key=config.get('glacier',
+    #     'aws_secret_access_key'), region_name=config.get('glacier',
+    #     'region'))
+    client = boto3.client('glacier')
     vault = layer2.get_vault(config.get('glacier', 'vault'))
  
     if jobid:

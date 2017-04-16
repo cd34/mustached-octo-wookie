@@ -32,8 +32,8 @@ def main():
         archive_description = filename.split('/')[-1]
         if os.path.isfile(filename) and archive_description \
             not in filenames:
-            print "rsync:", filename
-            print 'Uploaded: {0}, id: {1}'.format(filename, id) 
+            print('rsync: {filename}'.format(filename=filename))
+            print('Uploaded: {0}, id: {1}'.format(filename, id))
             filesize = 0
             try:
                 filesize = os.stat(filename).st_size
@@ -57,10 +57,10 @@ def main():
             """
         else:
             if not os.path.isfile(filename):
-                print 'Couldn\'t find file: {0}'.format(filename) 
+                print('Couldn\'t find file: {0}'.format(filename))
             else:
-                print 'File {filename} is already in glacier' \
-                    .format(filename=filename) 
+                print('File {filename} is already in glacier' \
+                    .format(filename=filename))
 
 if __name__ == '__main__':
     config = ConfigParser.ConfigParser()

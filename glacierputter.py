@@ -6,10 +6,14 @@ import json
 import os
 import sys
 
+import boto3
+
 from boto.glacier.layer1 import Layer1
 from boto.glacier.concurrent import ConcurrentUploader
 
 def main():
+    glacier = boto3.client('glacier')
+    """
     layer1 = Layer1(aws_access_key_id=config.get('glacier', 
          'aws_access_key_id'), aws_secret_access_key=config.get('glacier',
          'aws_secret_access_key'), region_name=config.get('glacier',
@@ -22,6 +26,7 @@ def main():
         pass
     uploader = ConcurrentUploader(layer1, config.get('glacier', 'vault'),
         part_size=128*1024*1024, num_threads=threads)
+    """
 
     if len(sys.argv) > 1:
         for filename in sys.argv[1:]:
@@ -39,7 +44,14 @@ def main():
             archive_description = filename.split('/')[-1]
             if os.path.isfile(filename) and archive_description \
                 not in filenames:
-                id = uploader.upload(filename, archive_description)
+                #id = uploader.upload(filename, archive_description)
+                file = open(filename, 'rb')
+                response = glacier.upload_archive(
+                    vaultName=config.get('glacier', 'vault'),
+                    archiveDescription=archive_description,
+                    body=file.read(),
+                )
+                id = response['archiveId']
                 print('Uploaded: {0}, id: {1}'.format(filename, id))
                 filesize = 0
                 try:
@@ -74,7 +86,6 @@ Need at least one filename on the command line, can accept globs.
 Example:
 
 {0} *.py""".format(sys.argv[0]))
-
 
 if __name__ == '__main__':
     config = ConfigParser.ConfigParser()
