@@ -64,7 +64,7 @@ def main():
 
 if __name__ == '__main__':
     config = ConfigParser.ConfigParser()
-    config.readfp(open(os.path.join('/'.join(sys.argv[0].split('/')[:-1]),
+    config.read_file(open(os.path.join('/'.join(sys.argv[0].split('/')[:-1]),
         'glacierputter.cfg')))
 
     try:

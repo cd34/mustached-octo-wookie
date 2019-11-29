@@ -1,48 +1,34 @@
 #!/usr/bin/env python3
 
+import argparse
 import configparser as ConfigParser
+import pprint
 import sys
 import os
 
-import boto3
+import libs.methods
 
-def main():
-    client = boto3.client('glacier')
+def main(config, args):
 
-    #layer1 = Layer1(aws_access_key_id=config.get('glacier',
-    #     'aws_access_key_id'), aws_secret_access_key=config.get('glacier',
-    #     'aws_secret_access_key'), region_name=config.get('glacier',
-    #     'region'))
- 
-    #job_id = layer1.initiate_job(config.get('glacier','vault'),
-    #    {"Description":"inventory-job", "Type":"inventory-retrieval",
-    #    "Format":"JSON"})
- 
-    print('Inventory job id: {0}'.format(job_id))
-
-    """
-    Decided to use the AWS methods instead, but, leaving this code here
-    as I believe there could be a need for historical jobs.
-
-    if config.get('glacier','jobs'):
-        try:
-            file = open(config.get('glacier','jobs'), 'r+')
-            list = json.loads(file.read())
-            list['jobs'].append(job_id)
-        except IOError:
-            file = open(config.get('glacier','jobs'), 'w+')
-            list = {'jobs':[job_id]}
-        file.seek(0) 
-        file.write(json.dumps(list))
-        file.close()
-    """
+    if args.long:
+        job = libs.methods.submitjob_glacier_contents(
+          '255275815284', config.get('glacier','vault'))
+        pprint(job)
+    else:
+        uploads_list = libs.methods.get_quick_glacier_contents(config.get('glacier','vault'))
+        pprint.pprint(uploads_list)
 
 if __name__ == '__main__':
     config = ConfigParser.ConfigParser()
-    config.readfp(open(os.path.join('/'.join(sys.argv[0].split('/')[:-1]),
+    config.read_file(open(os.path.join('/'.join(sys.argv[0].split('/')[:-1]),
         'glacierputter.cfg')))
-    
+
+    parser = argparse.ArgumentParser(description='List of Vault contents')
+    parser.add_argument('--long', action='store_const', const=True,
+      default=False, help='fetch archive')
+    args = parser.parse_args()
+
     try:
-        main()
+        main(config, args)
     except KeyboardInterrupt:
         sys.exit()
