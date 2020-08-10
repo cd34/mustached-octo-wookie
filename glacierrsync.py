@@ -15,32 +15,31 @@ destination_dir = /var/www/cd34.com/movies
 bw_limit = 24
 """
 
+
 def main():
-    source_dir = config.get('rsync','source_dir')
-    for filename in glob.glob(os.path.join(source_dir, '*.mp4')):
-        contents_file = config.get('glacier','contents')
+    source_dir = config.get("rsync", "source_dir")
+    for filename in glob.glob(os.path.join(source_dir, "*.mp4")):
+        contents_file = config.get("glacier", "contents")
         existing_contents = {}
         if contents_file:
             try:
-                file = open(contents_file, 'r+')
+                file = open(contents_file, "r+")
                 existing_contents = json.loads(file.read())
             except IOError:
-                file = open(contents_file, 'w+')
+                file = open(contents_file, "w+")
             file.close()
-        filenames = [x['ArchiveDescription'] for x in \
-            existing_contents.values()]
-        archive_description = filename.split('/')[-1]
-        if os.path.isfile(filename) and archive_description \
-            not in filenames:
-            print('rsync: {filename}'.format(filename=filename))
-            print('Uploaded: {0}, id: {1}'.format(filename, id))
+        filenames = [x["ArchiveDescription"] for x in existing_contents.values()]
+        archive_description = filename.split("/")[-1]
+        if os.path.isfile(filename) and archive_description not in filenames:
+            print("rsync: {filename}".format(filename=filename))
+            print("Uploaded: {0}, id: {1}".format(filename, id))
             filesize = 0
             try:
                 filesize = os.stat(filename).st_size
             except OSError:
                 pass
-            
-            #contents_file = config.get('glacier','contents')
+
+            # contents_file = config.get('glacier','contents')
             """
             list_of_files = {id:{'ArchiveId':id, 
                 'ArchiveDescription':archive_description,
@@ -57,15 +56,16 @@ def main():
             """
         else:
             if not os.path.isfile(filename):
-                print('Couldn\'t find file: {0}'.format(filename))
+                print("Couldn't find file: {0}".format(filename))
             else:
-                print('File {filename} is already in glacier' \
-                    .format(filename=filename))
+                print("File {filename} is already in glacier".format(filename=filename))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     config = ConfigParser.ConfigParser()
-    config.read_file(open(os.path.join('/'.join(sys.argv[0].split('/')[:-1]),
-        'glacierputter.cfg')))
+    config.read_file(
+        open(os.path.join("/".join(sys.argv[0].split("/")[:-1]), "glacierputter.cfg"))
+    )
 
     try:
         main()

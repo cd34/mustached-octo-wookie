@@ -10,8 +10,9 @@ import sys
 import boto3
 import libs.methods
 
+
 def main(args, config):
-    uploads_list = libs.methods.get_glacier_contents(config.get('glacier','vault'))
+    uploads_list = libs.methods.get_glacier_contents(config.get("glacier", "vault"))
     pprint.pprint(uploads_list)
 
     """
@@ -83,13 +84,15 @@ def main(args, config):
                         .format(filename=filename))
     """
 
-if __name__ == '__main__':
-    config = ConfigParser.ConfigParser()
-    config.read_file(open(os.path.join('/'.join(sys.argv[0].split('/')[:-1]),
-        'glacierputter.cfg')))
 
-    parser = argparse.ArgumentParser(description='Upload files to glacier.')
-    parser.add_argument('filename', help='Files or glob', nargs='+')
+if __name__ == "__main__":
+    config = ConfigParser.ConfigParser()
+    config.read_file(
+        open(os.path.join("/".join(sys.argv[0].split("/")[:-1]), "glacierputter.cfg"))
+    )
+
+    parser = argparse.ArgumentParser(description="Upload files to glacier.")
+    parser.add_argument("filename", help="Files or glob", nargs="+")
     args = parser.parse_args()
 
     try:
