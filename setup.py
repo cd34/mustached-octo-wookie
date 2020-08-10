@@ -11,6 +11,8 @@ except:
     CHANGES = ''
 
 requires = [
+    'black',
+    'boto',
     'boto3',
     ]
 

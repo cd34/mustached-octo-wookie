@@ -2,7 +2,6 @@
 
 import argparse
 import configparser as ConfigParser
-import pprint
 import sys
 import os
 
@@ -13,10 +12,10 @@ def main(config, args):
     if args.long:
         job = libs.methods.submitjob_glacier_contents(
           '255275815284', config.get('glacier','vault'))
-        pprint(job)
+        print(job)
     else:
         uploads_list = libs.methods.get_quick_glacier_contents(config.get('glacier','vault'))
-        pprint.pprint(uploads_list)
+        print(uploads_list)
 
 if __name__ == '__main__':
     config = ConfigParser.ConfigParser()
