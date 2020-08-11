@@ -17,9 +17,6 @@ requires = [
     "pytest-cov",
 ]
 
-if sys.version_info[:3] < (2, 5, 0):
-    requires.append("pysqlite")
-
 setup(
     name="glacierputter",
     version="0.0",
