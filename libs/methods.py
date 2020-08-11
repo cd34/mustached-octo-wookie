@@ -1,3 +1,5 @@
+import json
+
 import boto3
 
 def get_quick_glacier_contents(vault):
@@ -26,3 +28,15 @@ def rm_glacier_contents(vault, upload_id):
       'archiveId':upload_id}
     response = glacier.delete_archive(**request_args)
     return response['ResponseMetadata']['HTTPStatusCode'] == 204
+
+def get_local_contents(config):
+    contents_file = config.get('glacier','contents')
+    existing_contents = {}
+    if contents_file:
+        try:
+            file = open(contents_file, 'r+')
+            existing_contents = json.loads(file.read())
+        except IOError:
+            file = open(contents_file, 'w+')
+        file.close()
+    return existing_contents

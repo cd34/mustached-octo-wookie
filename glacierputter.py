@@ -12,30 +12,28 @@ import libs.methods
 
 
 def main(args, config):
-    uploads_list = libs.methods.get_glacier_contents(config.get("glacier", "vault"))
-    pprint.pprint(uploads_list)
+    #uploads_list = libs.methods.get_glacier_contents(config.get("glacier", "vault"))
 
-    """
-    glacier = boto3.client('glacier')
-    layer1 = Layer1(aws_access_key_id=config.get('glacier', 
-         'aws_access_key_id'), aws_secret_access_key=config.get('glacier',
-         'aws_secret_access_key'), region_name=config.get('glacier',
-         'region'))
+    client = boto3.client('glacier')
 
-    threads = 1
-    try:
-        threads = config.getint('glacier', 'threads')
-    except ConfigParser.NoOptionError:
-        pass
-    uploader = ConcurrentUploader(layer1, config.get('glacier', 'vault'),
-        part_size=128*1024*1024, num_threads=threads)
-    """
+    for file in args.filename:
+        existing_contents = libs.methods.get_local_contents(config)
+        existing_files = [x["ArchiveDescription"] for x in existing_contents.values()]
+        if file not in existing_files:
+            with open(file, 'rb') as f:
+                response = client.upload_archive(vaultName=config.get("glacier", "vault"),
+                    archiveDescription=os.path.basename(file),
+                    body=f)
+                id = response['archiveId']
+                libs.methods.update_local_contents(config, id, os.path.basename(file))
+
+
+
 
     """
     if len(sys.argv) > 1:
         for filename in sys.argv[1:]:
             contents_file = config.get('glacier','contents')
-            existing_contents = {}
             if contents_file:
                 try:
                     file = open(contents_file, 'r+')
