@@ -5,13 +5,10 @@ import configparser as ConfigParser
 import os
 import sys
 
-import boto3
 import libs.methods
 
 
 def main(args, config):
-    client = boto3.client("glacier")
-
     for file in args.filename:
         id = libs.methods.upload_file(config, file)
         base_file = os.path.basename(file)
