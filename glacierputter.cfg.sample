@@ -7,5 +7,5 @@ vault = vaultname
 region = us-west-2
 threads = 4
 
-contents = /path/to/glacier-contents.txt
-jobs = /path/to/glacier-jobs.txt
+contents = test_data/glacier-contents.txt
+jobs = test_data/glacier-jobs.txt
