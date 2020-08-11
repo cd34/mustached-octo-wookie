@@ -58,8 +58,6 @@ def update_local_contents(config, id, file):
         'CreationDate':datetime.datetime.now(). \
             strftime('%Y-%m-%dT%H:%M:%SZ'),
         'Size':filesize}}
-    print(list_of_files)
-    """
     if contents_file:
         file = open(contents_file, 'w+')
         list_of_files = dict(list_of_files.items() + \
@@ -67,4 +65,3 @@ def update_local_contents(config, id, file):
         file.seek(0)
         file.write(json.dumps(list_of_files))
         file.close()
-    """
