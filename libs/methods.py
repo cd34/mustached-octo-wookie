@@ -1,4 +1,6 @@
+import datetime
 import json
+import os
 
 import boto3
 
@@ -40,3 +42,29 @@ def get_local_contents(config):
             file = open(contents_file, 'w+')
         file.close()
     return existing_contents
+
+def update_local_contents(config, id, file):
+    contents_file = config.get('glacier','contents')
+    source_dir = config.get("rsync", "source_dir")
+    filename = os.path.join(source_dir,file)
+    filesize = 0
+    try:
+        filesize = os.stat(filename).st_size
+    except OSError:
+        pass
+
+    list_of_files = {id:{'ArchiveId':id,
+        'ArchiveDescription':file,
+        'CreationDate':datetime.datetime.now(). \
+            strftime('%Y-%m-%dT%H:%M:%SZ'),
+        'Size':filesize}}
+    print(list_of_files)
+    """
+    if contents_file:
+        file = open(contents_file, 'w+')
+        list_of_files = dict(list_of_files.items() + \
+            existing_contents.items())
+        file.seek(0)
+        file.write(json.dumps(list_of_files))
+        file.close()
+    """
