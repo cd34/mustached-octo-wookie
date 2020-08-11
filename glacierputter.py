@@ -18,6 +18,7 @@ def main(args, config):
         base_file = os.path.basename(file)
         if base_file not in existing_files and os.path.isfile(file):
             with open(file, "rb") as f:
+                print(f"Uploading {base_file}")
                 response = client.upload_archive(
                     vaultName=config.get("glacier", "vault"),
                     archiveDescription=base_file,
