@@ -3,18 +3,19 @@
 import argparse
 import configparser as ConfigParser
 import os
-import json
 import sys
 
 import libs.methods
 
 
 def main(config, args):
-    result = libs.methods.rm_glacier_contents(
-        config.get("glacier", "vault"), args.upload_id
-    )
-
-    libs.methods.delete_local_contents(config, args.upload_id)
+    try:
+        libs.methods.rm_glacier_contents(
+            config.get("glacier", "vault"), args.upload_id
+        )
+        libs.methods.delete_local_contents(config, args.upload_id)
+    except:
+        print(f"{args.upload_id} not found")
 
 
 if __name__ == "__main__":

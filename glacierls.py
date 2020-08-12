@@ -3,7 +3,6 @@
 import configparser as ConfigParser
 import sys
 import os
-import json
 import libs.methods
 
 
