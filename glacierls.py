@@ -4,11 +4,11 @@ import configparser as ConfigParser
 import sys
 import os
 import json
+import libs.methods
 
 
-def main():
-    file = open(config.get("glacier", "contents"), "r")
-    existing_contents = json.loads(file.read())
+def main(config):
+    existing_contents = libs.methods.get_local_contents(config)
     for item in existing_contents.items():
         print(
             item[1]["ArchiveDescription"],
@@ -21,10 +21,10 @@ def main():
 if __name__ == "__main__":
     config = ConfigParser.ConfigParser()
     config.read_file(
-        open(os.path.join("/".join(sys.argv[0].split("/")[:-1]), "glacierputter.cfg"))
+        open(os.path.join(os.path.dirname(sys.argv[0]), "glacierputter.cfg"))
     )
 
     try:
-        main()
+        main(config)
     except KeyboardInterrupt:
         sys.exit()

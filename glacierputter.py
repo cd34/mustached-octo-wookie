@@ -19,7 +19,7 @@ def main(args, config):
 if __name__ == "__main__":
     config = ConfigParser.ConfigParser()
     config.read_file(
-        open(os.path.join("/".join(sys.argv[0].split("/")[:-1]), "glacierputter.cfg"))
+        open(os.path.join(os.path.dirname(sys.argv[0]), "glacierputter.cfg"))
     )
 
     parser = argparse.ArgumentParser(description="Upload files to glacier.")
