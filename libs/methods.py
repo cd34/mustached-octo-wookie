@@ -75,6 +75,8 @@ def get_local_contents(config):
                 existing_contents = {}
         except IOError:
             file = open(contents_file, "w+")
+            file.seek(0)
+            file.write(json.dumps({}))
         file.close()
     return existing_contents
 

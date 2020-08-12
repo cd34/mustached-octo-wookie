@@ -1,5 +1,7 @@
+import copy
 import os
 import configparser
+import json
 import sys
 
 import libs.methods
@@ -12,6 +14,18 @@ class TestContents:
     def test_existing_contents(self):
         existing_contents = libs.methods.get_local_contents(config)
         assert type(existing_contents) == dict
+
+        test_config = copy.deepcopy(config)
+        test_config.set('glacier', 'contents', '/tmp/empty_file')
+        file = open('/tmp/empty_file', 'w')
+        file.close()
+        existing_contents = libs.methods.get_local_contents(test_config)
+        assert type(existing_contents) == dict
+
+        os.remove('/tmp/empty_file')
+        existing_contents = libs.methods.get_local_contents(test_config)
+        assert type(existing_contents) == dict
+        os.remove('/tmp/empty_file')
 
     def test_existing_files(self):
         existing_contents = libs.methods.get_local_contents(config)
@@ -35,6 +49,11 @@ class TestContents:
 
     def test_update_local_contents(self):
         libs.methods.update_local_contents(config, "1", "test_data/test_data.m4v")
+
+        existing_contents = libs.methods.get_local_contents(config)
+        assert len(existing_contents) == 2
+
+        libs.methods.update_local_contents(config, "1", "test_data/not_found.m4v")
 
         existing_contents = libs.methods.get_local_contents(config)
         assert len(existing_contents) == 2
