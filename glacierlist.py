@@ -10,16 +10,16 @@ import libs.methods
 
 def main(config, args):
 
-    if args.long:
-        job = libs.methods.submitjob_glacier_contents(
-            "255275815284", config.get("glacier", "vault")
-        )
-        print(job)
-    else:
-        uploads_list = libs.methods.get_quick_glacier_contents(
-            config.get("glacier", "vault")
-        )
-        print(uploads_list)
+    # if args.long:
+    job = libs.methods.submitjob_glacier_contents(config)
+    print(job)
+
+
+# else:
+#    uploads_list = libs.methods.get_quick_glacier_contents(
+#        config.get("glacier", "vault")
+#    )
+#    print(uploads_list)
 
 
 if __name__ == "__main__":

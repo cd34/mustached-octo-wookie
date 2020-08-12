@@ -1,32 +1,56 @@
 #!/usr/bin/env python3
 
-import configparser as ConfigParser
+import argparse
+import boto3
+import botocore
+import configparser
 import json
 import sys
 import os.path
 
-# from boto.glacier.layer2 import Layer2
-# from boto.glacier.exceptions import UnexpectedHTTPResponseError
-
 
 def printjobs(jobs, header):
-    if jobs:
+    if jobs["JobList"]:
         print(header)
-        for job_detail in jobs:
+        for job_detail in list(jobs["JobList"]):
             print(
                 "Request: {0}\nAction: {1}, Status: {2}\n".format(
-                    job_detail.id, job_detail.status_code, job_detail.description
+                    job_detail["JobId"], job_detail["StatusCode"], job_detail["Action"],
                 )
             )
 
 
-def main(jobid, filename):
-    # layer2 = Layer2(aws_access_key_id=config.get('glacier',
-    #     'aws_access_key_id'), aws_secret_access_key=config.get('glacier',
-    #     'aws_secret_access_key'), region_name=config.get('glacier',
-    #     'region'))
+def main(config, args):
     client = boto3.client("glacier")
-    vault = layer2.get_vault(config.get("glacier", "vault"))
+
+    if not args.save:
+        if args.jobid:
+            response = client.describe_job(
+                accountId=config.get("glacier", "account_id"),
+                jobId=args.jobid,
+                vaultName=config.get("glacier", "vault"),
+            )
+            print(response)
+        else:
+            running_jobs = client.list_jobs(
+                completed="false", vaultName=config.get("glacier", "vault")
+            )
+            printjobs(running_jobs, "Running Jobs")
+            completed_jobs = client.list_jobs(
+                completed="true", vaultName=config.get("glacier", "vault")
+            )
+            printjobs(completed_jobs, "Completed Jobs")
+    else:
+        try:
+            response = client.get_job_output(
+                vaultName=config.get("glacier", "vault"), jobId=args.jobid,
+            )
+            print(response)
+        except:
+            print("Retrieval not ready")
+
+    """
+
 
     if jobid:
         try:
@@ -50,26 +74,21 @@ def main(jobid, filename):
         except UnexpectedHTTPResponseError as e:
             print("ERROR", json.loads(e.body)["message"])
 
-    else:
-        running_jobs = vault.list_jobs(completed=False)
-        printjobs(running_jobs, "Running Jobs")
-        completed_jobs = vault.list_jobs(completed=True)
-        printjobs(completed_jobs, "Completed Jobs")
+    """
 
 
 if __name__ == "__main__":
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
     config.read_file(
         open(os.path.join("/".join(sys.argv[0].split("/")[:-1]), "glacierputter.cfg"))
     )
 
+    parser = argparse.ArgumentParser(description="Get glacier results.")
+    parser.add_argument("jobid", help="Amazon Job ID", nargs="?")
+    parser.add_argument("--save", help="save output", action="store_const", const=True)
+    args = parser.parse_args()
+
     try:
-        jobid = None
-        filename = None
-        if len(sys.argv) > 1:
-            jobid = sys.argv[1]
-        if len(sys.argv) > 2:
-            filename = sys.argv[2]
-        main(jobid, filename)
+        main(config, args)
     except KeyboardInterrupt:
         sys.exit()

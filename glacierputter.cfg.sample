@@ -3,6 +3,7 @@
 aws_access_key_id = XXXXXX
 aws_secret_access_key = XXXXXX
 
+account_id = xxxxxx
 vault = vaultname
 region = us-west-2
 threads = 4

@@ -20,9 +20,9 @@ def get_quick_glacier_contents(vault):
     return uploads_list
 
 
-def submitjob_glacier_contents(account_id, vault):
+def submitjob_glacier_contents(config):
     glacier = boto3.resource("glacier")
-    vault = glacier.Vault("account_id", "name")
+    vault = glacier.Vault(config.get("glacier", "account_id"), config.get("glacier", "vault"))
     job = vault.initiate_inventory_retrieval()
     return job
 
@@ -94,6 +94,7 @@ def update_local_contents(config, id, file):
     }
     if contents_file:
         file = open(contents_file, "w+")
+        existing_contents = get_local_contents(config)
         list_of_files = dict(list_of_files.items() + existing_contents.items())
         file.seek(0)
         file.write(json.dumps(list_of_files))
