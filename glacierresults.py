@@ -2,7 +2,6 @@
 
 import argparse
 import boto3
-import botocore
 import configparser
 import json
 import sys
@@ -45,36 +44,22 @@ def main(config, args):
             response = client.get_job_output(
                 vaultName=config.get("glacier", "vault"), jobId=args.jobid,
             )
-            print(response)
+            file_listing = {}
+            for l in json.loads(response["body"].read())["ArchiveList"]:
+                file_listing[l["ArchiveId"]] = {
+                    "ArchiveId": l["ArchiveId"],
+                    "ArchiveDescription": l["ArchiveDescription"],
+                    "SHA256TreeHash": l["SHA256TreeHash"],
+                    "Size": l["Size"],
+                    "CreationDate": l["CreationDate"],
+                }
+
+            contents_file = config.get("glacier", "contents")
+            file = open(contents_file, "w")
+            file.write(json.dumps(file_listing))
+            file.close()
         except:
             print("Retrieval not ready")
-
-    """
-
-
-    if jobid:
-        try:
-            contents = vault.get_job(jobid)
-            if contents.action == u"InventoryRetrieval":
-                if contents.completed:
-                    list_of_files = {
-                        x["ArchiveId"]: x for x in contents.get_output()["ArchiveList"]
-                    }
-                    contents_file = config.get("glacier", "contents")
-                    if contents_file:
-                        file = open(contents_file, "w+")
-                        file.write(json.dumps(list_of_files))
-                        file.close()
-            else:
-                if contents.completed:
-                    if filename:
-                        contents.download_to_file(filename)
-                    else:
-                        print("ERROR", "must have a filename")
-        except UnexpectedHTTPResponseError as e:
-            print("ERROR", json.loads(e.body)["message"])
-
-    """
 
 
 if __name__ == "__main__":
