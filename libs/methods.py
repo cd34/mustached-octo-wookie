@@ -22,7 +22,9 @@ def get_quick_glacier_contents(vault):
 
 def submitjob_glacier_contents(config):
     glacier = boto3.resource("glacier")
-    vault = glacier.Vault(config.get("glacier", "account_id"), config.get("glacier", "vault"))
+    vault = glacier.Vault(
+        config.get("glacier", "account_id"), config.get("glacier", "vault")
+    )
     job = vault.initiate_inventory_retrieval()
     return job
 
@@ -51,7 +53,7 @@ def upload_file(config, file):
                 body=f,
             )
             id = response["archiveId"]
-            update_local_contents(config, id, os.path.basename(file))
+            update_local_contents(config, id, file)
     else:
         if not os.path.isfile(file):
             print(f"Couldn't find file: {file}")
@@ -67,17 +69,19 @@ def get_local_contents(config):
     if contents_file:
         try:
             file = open(contents_file, "r+")
-            existing_contents = json.loads(file.read())
+            try:
+                existing_contents = json.loads(file.read())
+            except json.JSONDecodeError:
+                existing_contents = {}
         except IOError:
             file = open(contents_file, "w+")
         file.close()
     return existing_contents
 
 
-def update_local_contents(config, id, file):
+def update_local_contents(config, id, filename):
     contents_file = config.get("glacier", "contents")
     source_dir = config.get("rsync", "source_dir")
-    filename = os.path.join(source_dir, file)
     filesize = 0
     try:
         filesize = os.stat(filename).st_size
@@ -87,15 +91,15 @@ def update_local_contents(config, id, file):
     list_of_files = {
         id: {
             "ArchiveId": id,
-            "ArchiveDescription": file,
+            "ArchiveDescription": os.path.basename(filename),
             "CreationDate": datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
             "Size": filesize,
         }
     }
     if contents_file:
-        file = open(contents_file, "w+")
         existing_contents = get_local_contents(config)
-        list_of_files = dict(list_of_files.items() + existing_contents.items())
+        file = open(contents_file, "w+")
+        json_dict = {**list_of_files, **existing_contents}
         file.seek(0)
-        file.write(json.dumps(list_of_files))
+        file.write(json.dumps(json_dict))
         file.close()

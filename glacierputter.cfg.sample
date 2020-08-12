@@ -10,3 +10,6 @@ threads = 4
 
 contents = test_data/glacier-contents.txt
 jobs = test_data/glacier-jobs.txt
+
+[rsync]
+source_dir = test_data
