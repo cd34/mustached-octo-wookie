@@ -103,3 +103,15 @@ def update_local_contents(config, id, filename):
         file.seek(0)
         file.write(json.dumps(json_dict))
         file.close()
+
+def delete_local_contents(config, id):
+
+    contents_file = config.get("glacier", "contents")
+    if contents_file:
+        file = open(contents_file, "r")
+        existing_contents = json.loads(file.read())
+        file.close()
+        existing_contents.pop(id, None)
+        file = open(contents_file, "w")
+        file.write(json.dumps(existing_contents))
+        file.close()

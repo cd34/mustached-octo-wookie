@@ -14,15 +14,7 @@ def main(config, args):
         config.get("glacier", "vault"), args.upload_id
     )
 
-    contents_file = config.get("glacier", "contents")
-    if contents_file:
-        file = open(contents_file, "r")
-        existing_contents = json.loads(file.read())
-        file.close()
-        existing_contents.pop(args.upload_id, None)
-        file = open(contents_file, "w")
-        file.write(json.dumps(existing_contents))
-        file.close()
+    libs.methods.delete_local_contents(config, args.upload_id)
 
 
 if __name__ == "__main__":

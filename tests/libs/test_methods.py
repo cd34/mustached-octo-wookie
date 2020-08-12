@@ -35,3 +35,6 @@ class TestContents:
 
     def test_update_local_contents(self):
         libs.methods.update_local_contents(config, "1", "test_data/test_data.m4v")
+
+    def test_delete_local_contents(self):
+        libs.methods.delete_local_contents(config, "1")
