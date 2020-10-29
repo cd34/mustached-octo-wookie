@@ -22,7 +22,10 @@ def main(args, config):
             < time_end
         ):
             call_start = time.time()
-            libs.methods.upload_file(config, file)
+            try:
+                libs.methods.upload_file(config, file)
+            except:
+                print(f"Error uploading {file}")
             call_end = time.time()
             time_count += 1
             time_average = (time_average + (call_start - call_end)) / time_count
