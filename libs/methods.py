@@ -58,7 +58,8 @@ def upload_file(config, file):
         if not os.path.isfile(file):
             print(f"Couldn't find file: {file}")
         else:
-            print(f"File {file} is already in glacier")
+            pass
+            # print(f"File {file} is already in glacier")
 
     return id
 
