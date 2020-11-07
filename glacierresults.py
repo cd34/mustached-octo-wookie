@@ -3,6 +3,7 @@
 import argparse
 import boto3
 import configparser
+import io
 import json
 import sys
 import os.path
@@ -22,7 +23,7 @@ def printjobs(jobs, header):
 def main(config, args):
     client = boto3.client("glacier")
 
-    if not args.save:
+    if not args.save_contents and not args.save:
         if args.jobid:
             response = client.describe_job(
                 accountId=config.get("glacier", "account_id"),
@@ -41,23 +42,31 @@ def main(config, args):
             printjobs(completed_jobs, "Completed Jobs")
     else:
         try:
-            response = client.get_job_output(
-                vaultName=config.get("glacier", "vault"), jobId=args.jobid,
-            )
-            file_listing = {}
-            for l in json.loads(response["body"].read())["ArchiveList"]:
-                file_listing[l["ArchiveId"]] = {
-                    "ArchiveId": l["ArchiveId"],
-                    "ArchiveDescription": l["ArchiveDescription"],
-                    "SHA256TreeHash": l["SHA256TreeHash"],
-                    "Size": l["Size"],
-                    "CreationDate": l["CreationDate"],
-                }
+            if args.save:
+                response = client.get_job_output(
+                    vaultName=config.get("glacier", "vault"), jobId=args.jobid,
+                )
+                with io.FileIO("/tmp/glacier.output", "w") as file:
+                    for i in response['body']:
+                        file.write(i)
+            if args.save_contents:
+                response = client.get_job_output(
+                    vaultName=config.get("glacier", "vault"), jobId=args.jobid,
+                )
+                file_listing = {}
+                for l in json.loads(response["body"].read())["ArchiveList"]:
+                    file_listing[l["ArchiveId"]] = {
+                        "ArchiveId": l["ArchiveId"],
+                        "ArchiveDescription": l["ArchiveDescription"],
+                        "SHA256TreeHash": l["SHA256TreeHash"],
+                        "Size": l["Size"],
+                        "CreationDate": l["CreationDate"],
+                    }
 
-            contents_file = config.get("glacier", "contents")
-            file = open(contents_file, "w")
-            file.write(json.dumps(file_listing))
-            file.close()
+                contents_file = config.get("glacier", "contents")
+                file = open(contents_file, "w")
+                file.write(json.dumps(file_listing))
+                file.close()
         except:
             print("Retrieval not ready")
 
@@ -71,6 +80,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Get glacier results.")
     parser.add_argument("jobid", help="Amazon Job ID", nargs="?")
     parser.add_argument("--save", help="save output", action="store_const", const=True)
+    parser.add_argument("--save-contents", help="save directory contents", action="store_const", const=True)
     args = parser.parse_args()
 
     try:
