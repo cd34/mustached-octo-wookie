@@ -21,7 +21,9 @@ setup(
     version="0.0",
     description="glacierputter",
     long_description=README + "\n\n" + CHANGES,
-    classifiers=["Programming Language :: Python",],
+    classifiers=[
+        "Programming Language :: Python",
+    ],
     author="",
     author_email="",
     url="",

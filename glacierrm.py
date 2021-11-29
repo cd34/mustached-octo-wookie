@@ -10,9 +10,7 @@ import libs.methods
 
 def main(config, args):
     try:
-        libs.methods.rm_glacier_contents(
-            config.get("glacier", "vault"), args.upload_id
-        )
+        libs.methods.rm_glacier_contents(config.get("glacier", "vault"), args.upload_id)
         libs.methods.delete_local_contents(config, args.upload_id)
     except:
         print(f"{args.upload_id} not found")

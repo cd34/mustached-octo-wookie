@@ -15,7 +15,9 @@ def printjobs(jobs, header):
         for job_detail in list(jobs["JobList"]):
             print(
                 "Request: {0}\nAction: {1}, Status: {2}\n".format(
-                    job_detail["JobId"], job_detail["StatusCode"], job_detail["Action"],
+                    job_detail["JobId"],
+                    job_detail["StatusCode"],
+                    job_detail["Action"],
                 )
             )
 
@@ -44,14 +46,16 @@ def main(config, args):
         try:
             if args.save:
                 response = client.get_job_output(
-                    vaultName=config.get("glacier", "vault"), jobId=args.jobid,
+                    vaultName=config.get("glacier", "vault"),
+                    jobId=args.jobid,
                 )
                 with io.FileIO("/tmp/glacier.output", "w") as file:
-                    for i in response['body']:
+                    for i in response["body"]:
                         file.write(i)
             if args.save_contents:
                 response = client.get_job_output(
-                    vaultName=config.get("glacier", "vault"), jobId=args.jobid,
+                    vaultName=config.get("glacier", "vault"),
+                    jobId=args.jobid,
                 )
                 file_listing = {}
                 for l in json.loads(response["body"].read())["ArchiveList"]:
@@ -80,7 +84,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Get glacier results.")
     parser.add_argument("jobid", help="Amazon Job ID", nargs="?")
     parser.add_argument("--save", help="save output", action="store_const", const=True)
-    parser.add_argument("--save-contents", help="save directory contents", action="store_const", const=True)
+    parser.add_argument(
+        "--save-contents",
+        help="save directory contents",
+        action="store_const",
+        const=True,
+    )
     args = parser.parse_args()
 
     try:
