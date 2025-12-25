@@ -8,12 +8,12 @@ import libs.methods
 
 def main(config):
     existing_contents = libs.methods.get_local_contents(config)
-    for item in existing_contents.items():
+    for item in existing_contents['ArchiveList']:
         print(
-            item[1]["ArchiveDescription"],
-            item[1]["CreationDate"],
-            item[1]["Size"],
-            item[0],
+            item["ArchiveDescription"],
+            item["CreationDate"],
+            item["Size"],
+            item["ArchiveId"],
         )
 
 

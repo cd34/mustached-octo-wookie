@@ -21,7 +21,7 @@ def get_quick_glacier_contents(vault):
 
 
 def submitjob_glacier_contents(config):
-    glacier = boto3.resource("glacier")
+    glacier = boto3.resource("glacier", region_name=config.get("glacier", "region"))
     vault = glacier.Vault(
         config.get("glacier", "account_id"), config.get("glacier", "vault")
     )

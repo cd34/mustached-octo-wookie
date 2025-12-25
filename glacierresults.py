@@ -20,6 +20,8 @@ def printjobs(jobs, header):
                     job_detail["Action"],
                 )
             )
+            if job_detail["StatusCode"] == "Succeeded":
+                print("Execute: {0} {1} --save".format(sys.argv[0], job_detail["JobId"]))
 
 
 def main(config, args):
@@ -52,6 +54,7 @@ def main(config, args):
                 with io.FileIO("/tmp/glacier.output", "w") as file:
                     for i in response["body"]:
                         file.write(i)
+                    print("Saved to: /tmp/glacier.output")
             if args.save_contents:
                 response = client.get_job_output(
                     vaultName=config.get("glacier", "vault"),
